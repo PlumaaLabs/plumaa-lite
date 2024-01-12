@@ -1,12 +1,6 @@
-const title = "OpenZeppelin - Access Manager Explorer";
+const title = "Plumaa Lite";
 
 const description =
-  "OpenZeppelin's Access Manager UI to explore and interact with permissions around an AccessManager";
+  "Firma documentos con tu firma electrónica avanzada de forma fácil y segura. Gratis.";
 
-const links = {
-  twitter: "https://twitter.com/openzeppelin",
-  github: "https://github.com/openzeppelin/openzeppelin-contracts",
-  docs: "https://docs.openzeppelin.com/contracts/4.x/",
-};
-
-export { title, description, links };
+export { title, description };

@@ -1,106 +1,48 @@
-import Link from "next/link";
-
-import { links } from "@/config/site";
+"use client";
+import { Box, Button, Card, Flex, Separator, Text } from "@radix-ui/themes";
+import ThemeIcon from "./theme-icon";
 import Logo from "./logo";
-import { Box, Flex, IconButton, Separator, Text } from "@radix-ui/themes";
-import { TwitterLogoIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
-import ConnectButton from "../connect-button";
-import Search from "./search";
 
 const Navbar = () => {
   return (
-    <Box asChild width="100%" className="sticky top-0 z-40 border-b">
-      <header>
-        <Flex
-          height="9"
-          align="center"
-          justify={{
-            sm: "between",
-          }}
-          px="4"
-          mx="0"
-        >
-          <Link href="/" className="flex items-center ">
-            <Logo className="h-auto w-6" />
-            <Text ml="1" as="span" weight="bold" className=" sm:inline-block">
-              OpenZeppelin{" "}
-              <Text as="span" weight="light">
-                | AccessManager
-              </Text>
+    <Box className="sticky top-0 z-40 w-full">
+      <Card asChild size="2" className="no-radius">
+        <header>
+          <Flex
+            px={{
+              initial: "2",
+              sm: "4",
+            }}
+            mx="0"
+            align="center"
+          >
+            <Logo />
+            <Text mt="4" ml="1" as="span" weight="light" size="1">
+              Lite
             </Text>
-          </Link>
-          <Flex>
-            <Search
-              ml="4"
-              size="2"
-              variant="soft"
-              color="gray"
-              radius="full"
-              input={{
-                placeholder: "Search address...",
-                style: {
-                  width: 400,
-                },
-              }}
-            />
-          </Flex>
-          <Flex ml="auto" align="center" justify="end">
-            <Flex asChild align="center" mx="2">
-              <nav>
-                <ConnectButton
-                  mr="2"
-                  states={{
-                    connect: {
-                      variant: "solid",
-                      color: "blue",
-                    },
-                    wrongNetwork: {
-                      variant: "soft",
-                      color: "red",
-                    },
-                    connected: {
-                      account: {
-                        variant: "outline",
-                        color: "gray",
-                      },
-                      chain: {
-                        variant: "soft",
-                        color: "gray",
-                        ml: "2",
-                      },
-                    },
-                  }}
-                />
-                <Separator orientation="vertical" mr="1" size="1" />
-                <IconButton
-                  mx="2"
-                  size="3"
-                  variant="ghost"
-                  color="gray"
-                  asChild
-                >
-                  <Link href={links.github} target="_blank" rel="noreferrer">
-                    <GitHubLogoIcon />
-                    <span className="sr-only">Github</span>
-                  </Link>
-                </IconButton>
-                <IconButton
-                  ml="2"
-                  size="3"
-                  variant="ghost"
-                  color="gray"
-                  asChild
-                >
-                  <Link href={links.twitter} target="_blank" rel="noreferrer">
-                    <TwitterLogoIcon />
-                    <span className="sr-only">Twitter</span>
-                  </Link>
-                </IconButton>
-              </nav>
+            <Separator orientation="vertical" ml="5" />
+            <Flex width="100%" align="center" justify="end">
+              <Flex asChild align="center" mx="2">
+                <nav>
+                  <Button mx="4" variant="ghost" color="gray">
+                    Firmar
+                  </Button>
+                  <Button mx="4" variant="ghost" color="gray">
+                    Cambio de contraseña
+                  </Button>
+                </nav>
+              </Flex>
+              <ThemeIcon
+                ml="auto"
+                mx="2"
+                size="3"
+                variant="ghost"
+                color="gray"
+              />
             </Flex>
           </Flex>
-        </Flex>
-      </header>
+        </header>
+      </Card>
     </Box>
   );
 };

@@ -5,3 +5,8 @@
 input:focus {
   outline: none;
 }
+
+.no-radius,
+.no-radius::after {
+  border-radius: 0 !important;
+}

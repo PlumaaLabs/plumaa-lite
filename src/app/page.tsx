@@ -1,13 +1,10 @@
-import Navbar from "@/components/navbar";
-import Sidebar from "@/components/sidebar";
+import Navbar from "~/components/navbar";
 
 const Home = () => {
   return (
     <>
       <Navbar />
-      <main className="grow flex">
-        <Sidebar />
-      </main>
+      <main className="grow flex">Hello world</main>
     </>
   );
 };
