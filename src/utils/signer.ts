@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { asn1, md, pki } from "node-forge";
+import { asn1, md, pki, util } from "node-forge";
 
 import Certificate from "./certificate";
 class MismatchedPublicKeyError extends Error {}
@@ -65,7 +65,7 @@ class Signer {
   public sign(data: string, passphrase: string) {
     const privateKey = this.privateKey(passphrase);
     const messageDigest = md.sha256.create();
-    messageDigest.update(data, "utf8");
+    messageDigest.update(data, "raw");
     const signature = privateKey.sign(messageDigest);
 
     if (!this.publicKey.verify(messageDigest.digest().bytes(), signature)) {
