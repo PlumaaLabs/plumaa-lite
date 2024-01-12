@@ -10,3 +10,7 @@ input:focus {
 .no-radius::after {
   border-radius: 0 !important;
 }
+
+.react-pdf__Page {
+  background-color: transparent !important;
+}

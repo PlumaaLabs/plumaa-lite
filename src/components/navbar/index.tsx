@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import ROUTES from "~/config/routes";
 import { useMemo } from "react";
 import Link from "next/link";
+import { containerProps } from "~/config/ui";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -18,15 +19,15 @@ const Navbar = () => {
 
   return (
     <Box className="sticky top-0 z-40 w-full">
-      <Card asChild size="2" className="no-radius">
+      <Card asChild size="2" className="no-radius" variant="classic">
         <header>
           <Flex
             px={{
               initial: "2",
               sm: "4",
             }}
-            mx="0"
             align="center"
+            {...containerProps}
           >
             <Logo />
             <Text mt="4" ml="1" as="span" weight="light" size="1">
