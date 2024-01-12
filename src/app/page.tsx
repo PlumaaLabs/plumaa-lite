@@ -1,12 +1,8 @@
-import Navbar from "~/components/navbar";
+import ROUTES from "~/config/routes";
+import { redirect } from "next/navigation";
 
 const Home = () => {
-  return (
-    <>
-      <Navbar />
-      <main className="grow flex">Hello world</main>
-    </>
-  );
+  redirect(ROUTES.SIGN.ROOT());
 };
 
 export default Home;

@@ -6,6 +6,8 @@ import { title, description } from "~/config/site";
 import { cn } from "~/utils";
 import { FC } from "react";
 import { Theme } from "~/components/providers";
+import Navbar from "~/components/navbar";
+import { Box } from "@radix-ui/themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -45,7 +47,12 @@ const RootLayout: FC<Props> = ({ children }) => {
         suppressHydrationWarning
         className={cn(inter.className, "flex flex-col min-h-screen")}
       >
-        <Theme>{children}</Theme>
+        <Theme>
+          <Navbar />
+          <Box asChild p="4">
+            <main>{children}</main>
+          </Box>
+        </Theme>
       </body>
     </html>
   );
