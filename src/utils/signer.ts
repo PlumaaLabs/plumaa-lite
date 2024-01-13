@@ -67,12 +67,13 @@ class Signer {
     const messageDigest = md.sha256.create();
     messageDigest.update(data, "raw");
     const signature = privateKey.sign(messageDigest);
+    const digest = messageDigest.digest().bytes();
 
-    if (!this.publicKey.verify(messageDigest.digest().bytes(), signature)) {
+    if (!this.publicKey.verify(digest, signature)) {
       throw new SignatureVerificationError();
     }
 
-    return signature;
+    return { digest, signature };
   }
 
   private _decryptedPrivateKey(passphrase: string) {

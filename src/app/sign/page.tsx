@@ -1,13 +1,20 @@
 "use client";
 import {
+  CheckCircledIcon,
+  CheckIcon,
+  CircleBackslashIcon,
+  FileIcon,
   InfoCircledIcon,
   LockClosedIcon,
+  LockOpen1Icon,
   Pencil2Icon,
   ReaderIcon,
+  TrashIcon,
 } from "@radix-ui/react-icons";
 import {
   Button,
   Callout,
+  Card,
   Code,
   Flex,
   Heading,
@@ -24,6 +31,18 @@ import Certificate, {
   InvalidCertificateError,
 } from "~/utils/certificate";
 import Signer, { MismatchedPublicKeyError } from "~/utils/signer";
+import { toMD } from "./utils";
+import JSZip from "jszip";
+
+const downloadFile = (url: string, name: string) => {
+  const link = document.createElement("a");
+  link.download = name;
+  link.href = url;
+  link.target = "_blank";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 const Sign = () => {
   const [passphrase, setPassphrase] = useState("");
@@ -72,17 +91,40 @@ const Sign = () => {
       if (!certificate) return;
       if (!encryptedPrivateKey) return;
 
-      const certificateHelper = new Certificate(await certificate);
-      const signer = new Signer(certificateHelper, await encryptedPrivateKey);
+      const awaitedCertificate = await certificate;
+      const awaitedEncryptedPrivateKey = await encryptedPrivateKey;
+
+      const certificateHelper = new Certificate(awaitedCertificate);
+      const signer = new Signer(certificateHelper, awaitedEncryptedPrivateKey);
 
       const buff = util.createBuffer(
         await pdfDropzone.acceptedFiles[0].arrayBuffer()
       );
 
       const fileContent = buff.getBytes();
-      const signature = signer.sign(fileContent, passphrase);
+      const { signature, digest } = signer.sign(fileContent, passphrase);
 
-      console.log(signature);
+      const hexDigest = util.bytesToHex(digest);
+      const base64Signature = util.encode64(signature);
+
+      const zip = new JSZip();
+      zip.file("certificate.cer", certificateHelper.PEM);
+      zip.file("signature.txt", base64Signature);
+      zip.file("digest.txt", hexDigest);
+      zip.file(
+        "README.md",
+        toMD({
+          digest: hexDigest,
+          certificate: certificateHelper,
+          signature: base64Signature,
+        })
+      );
+      const content = await zip.generateAsync({ type: "base64" });
+
+      downloadFile(
+        `data:application/zip;base64,${content}`,
+        `firma-${certificateHelper.subject.serialNumber}-${base64Signature}.zip`
+      );
     } catch (err) {
       if (err instanceof MismatchedPublicKeyError) {
         return alert(
@@ -117,9 +159,16 @@ const Sign = () => {
       </Callout.Root>
       <Flex gap="5">
         <Flex direction="column" width="100%">
-          <Heading size="4" mt="4">
-            Paso 1. Importa tu PDF
-          </Heading>
+          <Flex align="center" mt="4">
+            {isPDF ? (
+              <CheckCircledIcon color="green" width="20" height="20" />
+            ) : (
+              <CircleBackslashIcon color="gray" width="20" height="20" />
+            )}
+            <Heading ml="2" size="4">
+              Paso 1. Importa tu PDF
+            </Heading>
+          </Flex>
           {pdfDropzone.acceptedFiles.length === 0 ? (
             <Dropzone
               style={{
@@ -141,9 +190,16 @@ const Sign = () => {
           )}
         </Flex>
         <Flex direction="column" width="100%">
-          <Heading size="4" mt="4">
-            Paso 2. Importa tu certificado y llave privada
-          </Heading>
+          <Flex align="center" mt="4">
+            {isCertificate ? (
+              <CheckCircledIcon color="green" width="20" height="20" />
+            ) : (
+              <CircleBackslashIcon color="gray" width="20" height="20" />
+            )}
+            <Heading ml="2" size="4">
+              Paso 2. Importa tu certificado y llave privada
+            </Heading>
+          </Flex>
           {certificateDropzone.acceptedFiles.length === 0 ? (
             <Dropzone
               {...certificateDropzone}
@@ -152,9 +208,12 @@ const Sign = () => {
               text="Coloca aquí to certificado (.cer)"
             />
           ) : (
-            <Text>
-              Certificado: {certificateDropzone.acceptedFiles[0].name}
-            </Text>
+            <Card my="2">
+              <Flex align="center" p="2">
+                <FileIcon width="30" height="30" />
+                <Text ml="2">{certificateDropzone.acceptedFiles[0].name}</Text>
+              </Flex>
+            </Card>
           )}
           {keyDropzone.acceptedFiles.length === 0 ? (
             <Dropzone
@@ -164,11 +223,24 @@ const Sign = () => {
               text="Coloca aquí tu llave (.key)"
             />
           ) : (
-            <Text>Llave: {keyDropzone.acceptedFiles[0].name}</Text>
+            <Card my="2">
+              <Flex align="center" p="2">
+                <LockOpen1Icon width="30" height="30" />
+                <Text ml="2">{keyDropzone.acceptedFiles[0].name}</Text>
+              </Flex>
+            </Card>
           )}
-          <Heading size="4" mt="4">
-            Paso 3. Escribe tu contraseña
-          </Heading>
+          <Flex align="center" mt="4">
+            {isCertificate ? (
+              <CheckCircledIcon color="green" width="20" height="20" />
+            ) : (
+              <CircleBackslashIcon color="gray" width="20" height="20" />
+            )}
+            <Heading ml="2" size="4">
+              Paso 3. Escribe tu contraseña
+            </Heading>
+          </Flex>
+
           <TextField.Root mt="2">
             <TextField.Slot>
               <LockClosedIcon height="16" width="16" />
@@ -181,9 +253,6 @@ const Sign = () => {
               placeholder="Contraseña"
             />
           </TextField.Root>
-          <Heading size="4" mt="4">
-            Paso 4. Firma
-          </Heading>
           <Button
             disabled={!isPDF || !isCertificate || !isKey || !passphrase}
             size="3"
