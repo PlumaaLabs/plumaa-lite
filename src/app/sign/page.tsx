@@ -1,7 +1,6 @@
 "use client";
 import {
   CheckCircledIcon,
-  CheckIcon,
   CircleBackslashIcon,
   FileIcon,
   InfoCircledIcon,
@@ -9,7 +8,6 @@ import {
   LockOpen1Icon,
   Pencil2Icon,
   ReaderIcon,
-  TrashIcon,
 } from "@radix-ui/react-icons";
 import {
   Button,
@@ -33,17 +31,7 @@ import Certificate, {
 import Signer, { MismatchedPublicKeyError } from "~/utils/signer";
 import { toMD } from "./utils";
 import JSZip from "jszip";
-
-const downloadFile = (url: string, name: string) => {
-  const link = document.createElement("a");
-  link.download = name;
-  link.href = url;
-  link.target = "_blank";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
+import { downloadFile } from "~/utils/files";
 const Sign = () => {
   const [passphrase, setPassphrase] = useState("");
 
